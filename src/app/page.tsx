@@ -1,11 +1,8 @@
-import { Button } from "@/components/ui/button";
-
 export default function Home() {
   return (
-    <div className="flex h-screen">
-      <div className="m-auto text-2xl ">
+    <div className="flex h-[calc(100vh-65px)]">
+      <div className="m-auto text-4xl">
         HOME PAGE
-        <Button>Click me</Button>
       </div>
     </div>
   );
