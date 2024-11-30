@@ -1,43 +1,31 @@
 import Link from "next/link";
 import { UserAuthButton } from "@/components/ui/user-auth-button";
-import { CircuitBoard } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuList,
-} from "@/components/ui/navigation-menu";
+import { VibrantLogo } from "./home/vibrant-logo";
 
 export function Navbar() {
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center bg-slate-400 rounded-b-md p-4">
-        <div className="mr-4 flex items-center space-x-2">
-          <CircuitBoard className="h-6 w-6" />
-          <Link href="/" className="flex items-center space-x-2">
-            <span className="font-bold text-xl">Vizu</span>
-          </Link>
-        </div>
-        <div className="flex flex-1 items-center justify-end space-x-4">
-          <NavigationMenu>
-            <NavigationMenuList>
-              <NavigationMenuItem>
-                <Button variant="ghost" asChild>
-                  <Link href="/about">About</Link>
-                </Button>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <Button variant="ghost" asChild>
-                  <Link href="/contact">Contact</Link>
-                </Button>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <UserAuthButton />
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
-        </div>
-      </div>
-    </header>
+    <header className="sticky top-0 z-50 bg-[#feeed9] backdrop-blur-sm border-b">
+                <div className="container mx-auto px-4 py-4">
+                    <nav className="flex items-center justify-between">
+                        <VibrantLogo />
+                        <div className="hidden md:flex items-center gap-6">
+                            <Link href="#" className="text-gray-600 hover:text-gray-900 transition-colors">Home</Link>
+                            <Link href="#" className="text-gray-600 hover:text-gray-900 transition-colors">Features</Link>
+                            <Link href="#" className="text-gray-600 hover:text-gray-900 transition-colors">How it Works</Link>
+                            <Link href="#" className="text-gray-600 hover:text-gray-900 transition-colors">About Us</Link>
+                            <Link href="#" className="text-gray-600 hover:text-gray-900 transition-colors">Blog</Link>
+                        </div>
+                        <div className="flex items-center gap-4">
+                            <UserAuthButton />
+                            <Link href='/dashboard'>
+                            <Button className="bg-rose-500 hover:bg-rose-600 transition-colors">
+                                Get Started
+                            </Button>
+                            </Link>
+                        </div>
+                    </nav>
+                </div>
+            </header>
   );
 }
