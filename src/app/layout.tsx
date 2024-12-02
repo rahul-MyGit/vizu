@@ -4,7 +4,11 @@ import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Providers } from "@/components/providers";
 import { Toaster } from "sonner";
-import { AuthToast } from "@/components/AuthToast";
+import dynamic from 'next/dynamic';
+import { Suspense } from "react";
+
+const AuthToast = dynamic(() => import('@/components/AuthToast').then((mod) => mod.AuthToast));
+
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -36,7 +40,9 @@ export default function RootLayout({
         <Navbar />
         {children}
         <Toaster richColors/>
-        <AuthToast />
+        <Suspense fallback={null}>
+            <AuthToast />
+          </Suspense>
         </Providers>
       </body>
     </html>
