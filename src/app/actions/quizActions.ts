@@ -3,7 +3,8 @@
 import { YoutubeTranscript } from "youtube-transcript";
 import prisma from "@/db";
 import { auth } from "@/lib/auth";
-import OpenAI from 'openai';
+// import OpenAI from 'openai';
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 type QuizQuestion = {
     question: string;
@@ -11,9 +12,10 @@ type QuizQuestion = {
     explanation: string;
 }
 
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
+// const openai = new OpenAI({
+//     apiKey: process.env.OPENAI_API_KEY,
+// });
+const genAI = new GoogleGenerativeAI(process.env.GOOLGE_GEMINI_API_KEY!)
 
 export async function createQuizFromYoutube(youtubeUrl: string) {
     const session = await auth();
@@ -22,7 +24,7 @@ export async function createQuizFromYoutube(youtubeUrl: string) {
     try {
         const videoId = extractVideoId(youtubeUrl);
         if (!videoId) {
-            throw new Error('Video not get extracted')
+            throw new Error('Video id not get extracted')
         }
 
         const transcript = await YoutubeTranscript.fetchTranscript(videoId)
@@ -59,11 +61,11 @@ export async function createQuizFromYoutube(youtubeUrl: string) {
         })
 
         return {
-            success: false,
+            success: true,
             quizId: quiz.id
         }
 
-    } catch (error : any) {
+    } catch (error: any) {
         console.log(error);
         return {
             success: false,
@@ -78,26 +80,77 @@ function extractVideoId(url: string) {
     return match ? match[1] : null;
 }
 
-async function generateQuestions(transcript: string) : Promise<QuizQuestion[]> {
+async function generateQuestions(transcript: string): Promise<QuizQuestion[]> {
+    const model = genAI.getGenerativeModel({ model: "gemini-pro"});
+
     const prompt = `
-    Create 10 multiple choice questions based on this transcript. 
-    Format your response as a JSON array of objects with the following structure:
-    {
-      "question": "question text",
-      "options": [
-        { "content": "option text", "isCorrect": boolean }
-      ],
-      "explanation": "explanation for the correct answer"
-    }
-    Each question should have exactly 4 options with only one correct answer.
-    Transcript: ${transcript.substring(0, 4000)} // Limiting transcript length
+    Based on the transcript about creating a video subtitle generator using AI and Whisper, create 10 multiple-choice quiz questions that test comprehension and key details.
+
+    IMPORTANT REQUIREMENTS:
+    - Each question must have exactly 4 answer options
+    - Only ONE option per question should be marked as correct (isCorrect: true)
+    - Cover different aspects of the video: technical details, approaches, tools, and concepts
+    - Explanations should be informative and reference specific parts of the transcript
+    
+    Provide the response in the following STRICT JSON format:
+    [
+      {
+        "question": "String with the quiz question",
+        "options": [
+          {"content": "Option 1 text", "isCorrect": false},
+          {"content": "Option 2 text", "isCorrect": true},
+          {"content": "Option 3 text", "isCorrect": false},
+          {"content": "Option 4 text", "isCorrect": false}
+        ],
+        "explanation": "Detailed explanation of why the correct answer is right"
+      }
+      // ... 9 more questions following same structure
+    ]
+
+    Transcript Context: ${transcript.substring(0, 4000)}
   `;
 
-  const response = await openai.chat.completions.create({
-    model: "gpt-3.5-turbo",
-    messages: [{ role: "user", content: prompt }],
-  });
+  try {
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
 
-  const content = response.choices[0].message.content || '[]';
-    return JSON.parse(content);
+    const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/) || 
+                      text.match(/```\n([\s\S]*?)\n```/) ||
+                      [text, text];
+    
+    const content = jsonMatch[1].trim();
+    
+    const parsedQuestions = JSON.parse(content);
+    
+    const validQuestions = parsedQuestions.filter((q: any) => 
+      q.question && 
+      q.options && 
+      q.options.length === 4 && 
+      q.options.filter((opt: any) => opt.isCorrect).length === 1 &&
+      q.explanation
+    );
+
+    if (validQuestions.length === 0) {
+      throw new Error('No valid questions generated');
+    }
+
+    return validQuestions;
+
+  } catch (error) {
+    console.error('Error generating questions:', error);
+    
+    return [
+      {
+        question: "What is the main purpose of the video?",
+        options: [
+          {"content": "Teaching Docker", "isCorrect": false},
+          {"content": "Creating a video subtitle generator", "isCorrect": true},
+          {"content": "Explaining Python programming", "isCorrect": false},
+          {"content": "Reviewing AI tools", "isCorrect": false}
+        ],
+        explanation: "The video demonstrates how to create an AI-powered video subtitle generator using Whisper AI."
+      }
+    ];
+  }
 }

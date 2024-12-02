@@ -23,7 +23,7 @@ type Quiz = {
     question: Question[]
 }
 
-const QuizTest = ({ quiz }: { quiz: Quiz }) => {
+const QuizTest = ({ quiz }: { quiz: Quiz }) => {    
     const [currentQuestion, setCurrentQuestion] = useState(0)
     const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>({})
 
@@ -44,7 +44,7 @@ const QuizTest = ({ quiz }: { quiz: Quiz }) => {
         console.log('Submitted answers:', selectedAnswers)
     }
 
-    const question = quiz.question[currentQuestion]
+    const question = quiz.question[currentQuestion]    
 
     return (
         <div className="space-y-8">
