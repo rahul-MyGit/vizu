@@ -5,6 +5,7 @@ import prisma from "@/db";
 import { auth } from "@/lib/auth";
 // import OpenAI from 'openai';
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { revalidatePath } from "next/cache";
 
 type QuizQuestion = {
     question: string;
@@ -60,6 +61,8 @@ export async function createQuizFromYoutube(youtubeUrl: string) {
             }
         })
 
+        revalidatePath('/dashboard/quizstart')
+        revalidatePath('/dashboard')
         return {
             success: true,
             quizId: quiz.id

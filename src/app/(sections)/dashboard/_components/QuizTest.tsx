@@ -131,16 +131,16 @@ const QuizTest = ({ quiz }: { quiz: Quiz }) => {
                     <div
                         key={index}
                         className={`w-3 h-3 rounded-full ${index === currentQuestion
-                                ? 'bg-rose-500'
-                                : selectedAnswers[quiz.question[index].id]
-                                    ? 'bg-rose-200'
-                                    : 'bg-gray-200'
+                            ? 'bg-rose-500'
+                            : selectedAnswers[quiz.question[index].id]
+                                ? 'bg-rose-200'
+                                : 'bg-gray-200'
                             }`}
                     />
                 ))}
             </div>
 
-            <Dialog open={showResultDialog} onOpenChange={setShowResultDialog}>
+            {showResultDialog && <Dialog open={showResultDialog} onOpenChange={setShowResultDialog}>
                 <div className="p-6">
                     <h2 className="text-xl font-bold">Quiz Results</h2>
                     <p className="mt-4">You scored {score} out of {quiz.question.length}!</p>
@@ -149,6 +149,7 @@ const QuizTest = ({ quiz }: { quiz: Quiz }) => {
                     </Button>
                 </div>
             </Dialog>
+            }
         </div>
     )
 }
