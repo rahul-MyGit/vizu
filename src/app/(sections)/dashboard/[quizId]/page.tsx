@@ -7,14 +7,16 @@ interface QuizIdProps {
     quizId : string
 }
 
-const page = async ({params} : {params : QuizIdProps}) => {
+const page = async ({params} : any) => {
     const session = await auth()
+    const {quizId} = await params
+    console.log(quizId);
+    
     if(!session?.user.id){
         redirect('/')
     }
-    console.log(params.quizId);
     
-    const data = await fetchQuizDataUsingQuizId(params?.quizId)
+    const data = await fetchQuizDataUsingQuizId(quizId)
     console.log(data);
     //TODO: update the quiz details here
   return (

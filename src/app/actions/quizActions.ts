@@ -59,7 +59,15 @@ export async function createQuizFromYoutube(youtubeUrl: string) {
                     }
                 }
             }
-        })
+        });
+
+        await prisma.quizattempt.create({
+          data: {
+              quizId: quiz.id,
+              userId: quiz.userId,
+              startedAt: new Date(),
+          },
+      });
 
         revalidatePath('/dashboard/quizstart')
         revalidatePath('/dashboard')

@@ -4,9 +4,6 @@ import prisma from "@/db";
 
 export async function submitQuizAnswers(quizId: string, answers: Record<string, string>) {
     try {
-        if (quizId.length < 1) {
-            throw new Error('Quizid is absent');
-        }
         const quiz = await prisma.quiz.findUnique({
             where: { id: quizId },
             include: {
@@ -28,6 +25,16 @@ export async function submitQuizAnswers(quizId: string, answers: Record<string, 
             if (correctOption && answers[question.id] === correctOption.id) {
                 score++;
             }
+        });
+
+        await prisma.quizattempt.update({
+            where:{
+                quizId
+            },
+            data: {
+                score: score,
+                completedAt: new Date(),
+            },
         });
 
         return { score, total: quiz.question.length };

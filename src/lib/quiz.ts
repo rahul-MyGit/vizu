@@ -23,9 +23,7 @@ export async function getQuizById(presentUserId: string) {
             }
         }
     })
-
-    if(!quiz) redirect('/dashboard')
-
+    
     return quiz
 }
 
@@ -51,6 +49,8 @@ export async function fetchQuizDataUsingQuizId(id: string) {
     })
 
     if(!apiRes){
+        console.log(apiRes);
+        
         redirect('/dashboard')
     }
 

@@ -93,7 +93,7 @@ export default function QuizHistory() {
                                                 </div>
                                             </TableCell>
                                             <TableCell>
-                                                <Button onClick={() => router.push(`/dasboard/${attempt.id}`)}>Click me</Button>
+                                                <Button onClick={() => router.push(`/dashboard/${attempt.id}`)}>Click me</Button>
                                             </TableCell>
                                         </TableRow>
                                     ))}

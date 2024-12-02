@@ -8,7 +8,8 @@ import { Card } from "@/components/ui/card"
 import { submitQuizAnswers } from '@/app/actions/submitAction'
 import { toast } from 'sonner'
 import { Dialog } from '@radix-ui/react-dialog'
-
+import { redirect } from 'next/navigation'
+//TODO:BUG
 type Option = {
     id: string
     content: string
@@ -48,7 +49,9 @@ const QuizTest = ({ quiz }: { quiz: Quiz }) => {
         try {
             const res = await submitQuizAnswers(quiz.id, selectedAnswers)
             setScore(res.score);
-            setShowResultDialog(true)
+            setShowResultDialog(true);
+            toast.success('Quiz Completed');
+            redirect('/dashboard');
         } catch (error) {
             toast.error('Error while submitting');
         }
