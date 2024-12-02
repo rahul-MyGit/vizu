@@ -1,11 +1,10 @@
 import React from 'react'
-import StartQuiz from './_components/StartQuiz'
+import QuizHistory from './_components/DashboardQuiz'
 
 const page = () => {
   return (
     <>
-    <div>DASHBOARD</div>
-    <StartQuiz />
+      <QuizHistory />
     </>
   )
 }
