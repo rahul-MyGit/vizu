@@ -12,6 +12,7 @@ import { Trophy } from 'lucide-react'
 import { useEffect, useState } from "react"
 import { getQuizAttempts } from "@/app/actions/userActions"
 import StartQuiz from "./StartQuiz"
+import DashboardSkeleton from "./DasboardSkeleton"
 
 interface QuizAttempt {
     id: string
@@ -30,7 +31,7 @@ export default function QuizHistory() {
             try {
                 const attempts = await getQuizAttempts();
                 if (attempts.success) {
-                    setQuizAttempts(attempts?.data);
+                    setQuizAttempts(attempts?.data || []);
                 }
 
             } catch (error) {
@@ -43,10 +44,6 @@ export default function QuizHistory() {
         fetchQuizAttempts();
     }, []);
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
-
     return (
         <div className="container mx-auto py-6">
             <div className="flex justify-between items-center mb-6">
@@ -55,44 +52,48 @@ export default function QuizHistory() {
             </div>
 
             <div className="grid gap-6 mb-8">
-                <div className="bg-white shadow-md rounded-lg overflow-hidden">
-                    <div className="p-6">
-                        <h2 className="text-2xl font-bold mb-4">Your Quiz History</h2>
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>Quiz Name</TableHead>
-                                    <TableHead>Score</TableHead>
-                                    <TableHead>Completion Date</TableHead>
-                                    <TableHead>Performance</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {quizAttempts.map((attempt) => (
-                                    <TableRow key={attempt.id}>
-                                        <TableCell className="font-medium">{attempt.quizName}</TableCell>
-                                        <TableCell>
-                                            {attempt.score}/{attempt.totalQuestions}
-                                        </TableCell>
-                                        <TableCell>
-                                            {new Date(attempt.completedAt).toLocaleDateString()}
-                                        </TableCell>
-                                        <TableCell>
-                                            <div className="flex items-center gap-2">
-                                                <span className="font-semibold text-[#FF4D8D]">
-                                                    {Math.round((attempt.score / attempt.totalQuestions) * 100)}%
-                                                </span>
-                                                {attempt.score === attempt.totalQuestions && (
-                                                    <Trophy className="h-4 w-4 text-yellow-500" />
-                                                )}
-                                            </div>
-                                        </TableCell>
+                {loading ? (
+                    <DashboardSkeleton />
+                ) : (
+                    <div className="bg-white shadow-md rounded-lg overflow-hidden">
+                        <div className="p-6">
+                            <h2 className="text-2xl font-bold mb-4">Your Quiz History</h2>
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead>Quiz Name</TableHead>
+                                        <TableHead>Score</TableHead>
+                                        <TableHead>Completion Date</TableHead>
+                                        <TableHead>Performance</TableHead>
                                     </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
+                                </TableHeader>
+                                <TableBody>
+                                    {quizAttempts.map((attempt) => (
+                                        <TableRow key={attempt.id}>
+                                            <TableCell className="font-medium">{attempt.quizName}</TableCell>
+                                            <TableCell>
+                                                {attempt.score}/{attempt.totalQuestions}
+                                            </TableCell>
+                                            <TableCell>
+                                                {new Date(attempt.completedAt).toLocaleDateString()}
+                                            </TableCell>
+                                            <TableCell>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="font-semibold text-[#FF4D8D]">
+                                                        {Math.round((attempt.score / attempt.totalQuestions) * 100)}%
+                                                    </span>
+                                                    {attempt.score === attempt.totalQuestions && (
+                                                        <Trophy className="h-4 w-4 text-yellow-500" />
+                                                    )}
+                                                </div>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
         </div>
     )
