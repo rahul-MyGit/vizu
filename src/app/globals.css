@@ -25,6 +25,32 @@
   }
 }
 
+
+
+/* Add this to your global CSS file or a specific CSS module */
+.dialog-enter {
+    opacity: 0;
+    transform: translateY(-20px);
+}
+
+.dialog-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+.dialog-exit {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.dialog-exit-active {
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+
 @layer base {
   * {
     @apply border-border;

@@ -5,6 +5,9 @@ import { Button } from "@/components/ui/button"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { Card } from "@/components/ui/card"
+import { submitQuizAnswers } from '@/app/actions/submitAction'
+import { toast } from 'sonner'
+import { Dialog } from '@radix-ui/react-dialog'
 
 type Option = {
     id: string
@@ -23,9 +26,11 @@ type Quiz = {
     question: Question[]
 }
 
-const QuizTest = ({ quiz }: { quiz: Quiz }) => {    
+const QuizTest = ({ quiz }: { quiz: Quiz }) => {
     const [currentQuestion, setCurrentQuestion] = useState(0)
     const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>({})
+    const [showResultDialog, setShowResultDialog] = useState(false)
+    const [score, setScore] = useState(0)
 
     const handleNext = () => {
         if (currentQuestion < quiz.question.length - 1) {
@@ -40,11 +45,16 @@ const QuizTest = ({ quiz }: { quiz: Quiz }) => {
     }
 
     const handleSubmit = async () => {
-        // TODO: Implement submit functionality
-        console.log('Submitted answers:', selectedAnswers)
+        try {
+            const res = await submitQuizAnswers(quiz.id, selectedAnswers)
+            setScore(res.score);
+            setShowResultDialog(true)
+        } catch (error) {
+            toast.error('Error while submitting');
+        }
     }
 
-    const question = quiz.question[currentQuestion]    
+    const question = quiz.question[currentQuestion]
 
     return (
         <div className="space-y-8">
@@ -72,12 +82,12 @@ const QuizTest = ({ quiz }: { quiz: Quiz }) => {
                 >
                     {question.options.map((option) => (
                         <div key={option.id} className="flex items-center space-x-2">
-                            <RadioGroupItem 
-                                value={option.id} 
+                            <RadioGroupItem
+                                value={option.id}
                                 id={option.id}
                                 className="text-rose-500 border-gray-300"
                             />
-                            <Label 
+                            <Label
                                 htmlFor={option.id}
                                 className="text-gray-700 text-lg cursor-pointer"
                             >
@@ -120,16 +130,25 @@ const QuizTest = ({ quiz }: { quiz: Quiz }) => {
                 {quiz.question.map((_, index) => (
                     <div
                         key={index}
-                        className={`w-3 h-3 rounded-full ${
-                            index === currentQuestion 
-                                ? 'bg-rose-500' 
+                        className={`w-3 h-3 rounded-full ${index === currentQuestion
+                                ? 'bg-rose-500'
                                 : selectedAnswers[quiz.question[index].id]
                                     ? 'bg-rose-200'
                                     : 'bg-gray-200'
-                        }`}
+                            }`}
                     />
                 ))}
             </div>
+
+            <Dialog open={showResultDialog} onOpenChange={setShowResultDialog}>
+                <div className="p-6">
+                    <h2 className="text-xl font-bold">Quiz Results</h2>
+                    <p className="mt-4">You scored {score} out of {quiz.question.length}!</p>
+                    <Button onClick={() => setShowResultDialog(false)} className="mt-4">
+                        Close
+                    </Button>
+                </div>
+            </Dialog>
         </div>
     )
 }
