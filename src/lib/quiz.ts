@@ -28,3 +28,31 @@ export async function getQuizById(presentUserId: string) {
 
     return quiz
 }
+
+
+export async function fetchQuizDataUsingQuizId(id: string) {
+    const apiRes = await prisma.quiz.findUnique({
+        where: {
+            id
+        },
+        include: {
+            question: {
+                include: {
+                    options: {
+                        select: {
+                            id: true,
+                            content: true,
+                            isCorrect: true
+                        }
+                    }
+                }
+            }
+        }
+    })
+
+    if(!apiRes){
+        redirect('/dashboard')
+    }
+
+    return apiRes;
+}

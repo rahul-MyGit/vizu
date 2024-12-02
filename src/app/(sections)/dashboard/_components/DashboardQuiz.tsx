@@ -13,6 +13,8 @@ import { useEffect, useState } from "react"
 import { getQuizAttempts } from "@/app/actions/userActions"
 import StartQuiz from "./StartQuiz"
 import DashboardSkeleton from "./DasboardSkeleton"
+import { Button } from "@/components/ui/button"
+import { useRouter } from "next/navigation"
 
 interface QuizAttempt {
     id: string
@@ -25,6 +27,8 @@ interface QuizAttempt {
 export default function QuizHistory() {
     const [quizAttempts, setQuizAttempts] = useState<QuizAttempt[]>([]);
     const [loading, setLoading] = useState(true);
+
+    const router = useRouter();
 
     useEffect(() => {
         const fetchQuizAttempts = async () => {
@@ -65,6 +69,7 @@ export default function QuizHistory() {
                                         <TableHead>Score</TableHead>
                                         <TableHead>Completion Date</TableHead>
                                         <TableHead>Performance</TableHead>
+                                        <TableHead>View More</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -86,6 +91,9 @@ export default function QuizHistory() {
                                                         <Trophy className="h-4 w-4 text-yellow-500" />
                                                     )}
                                                 </div>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Button onClick={() => router.push(`/dasboard/${attempt.id}`)}>Click me</Button>
                                             </TableCell>
                                         </TableRow>
                                     ))}
