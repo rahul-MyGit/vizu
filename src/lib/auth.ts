@@ -54,7 +54,9 @@ export const authMiddleware = auth((req) => {
     }
 
     if (!isLoggedIn) {
-        return NextResponse.redirect(new URL('/', req.nextUrl));
+        const redirectUrl = new URL('/', req.nextUrl)
+        redirectUrl.searchParams.set('auth', 'required')
+        return NextResponse.redirect(redirectUrl)
     }
 
     return NextResponse.next();

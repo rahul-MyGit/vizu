@@ -58,8 +58,17 @@ export async function createQuizFromYoutube(youtubeUrl: string) {
             }
         })
 
-    } catch (error) {
+        return {
+            success: false,
+            quizId: quiz.id
+        }
 
+    } catch (error : any) {
+        console.log(error);
+        return {
+            success: false,
+            error: 'Failed to create the quiz'
+        }
     }
 }
 
