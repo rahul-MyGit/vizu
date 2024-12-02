@@ -15,16 +15,33 @@ const UploadVideo = () => {
     const [videoFile, setVideoFile] = useState<File | null>(null)
     const [youtubeUrl, setYoutubeUrl] = useState("")
     const [loading, setLoading] = useState(false);
+    const [progress, setProgress] = useState(0);
 
     const router = useRouter();
 
     const handleYoutubeSubmit = async () => {
         try {
             setLoading(true)
-            const result = await createQuizFromYoutube(youtubeUrl)
+            setProgress(0);
+
+            const interval = setInterval(() => {
+                setProgress(prev => {
+                    if (prev >= 95) {
+                        clearInterval(interval);
+                        return 100;
+                    }
+                    return prev + 1;
+                });
+            }, 300);
+
+            const result = await createQuizFromYoutube(youtubeUrl);
+
+            clearInterval(interval);
+            setProgress(100);
 
             if (result.success) {
                 router.push('/dashboard/quizstart')
+                toast.success('BE READY, Starting the quizzz')
             } else {
                 toast.error(result.error || "Failed to create quiz")
             }
@@ -119,6 +136,14 @@ const UploadVideo = () => {
                         Paste a valid YouTube video URL
                     </p>
                 </div>
+                {loading && (
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div
+                            className="bg-rose-500 h-2 rounded-full"
+                            style={{ width: `${progress}%` }}
+                        />
+                    </div>
+                )}
                 <Button
                     className="w-full bg-rose-500 hover:bg-rose-600 h-12 rounded-xl
                     transform transition-all duration-300 hover:scale-[1.02] disabled:opacity-50
