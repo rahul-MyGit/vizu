@@ -1,10 +1,12 @@
 'use server'
 
 import prisma from "@/db";
+import { revalidatePath } from "next/cache";
 
 export async function submitQuizAnswers(quizId: string, answers: Record<string, string>) {
+    let quiz;
     try {
-        const quiz = await prisma.quiz.findUnique({
+        quiz = await prisma.quiz.findUnique({
             where: { id: quizId },
             include: {
                 question: {
@@ -14,7 +16,7 @@ export async function submitQuizAnswers(quizId: string, answers: Record<string, 
                 },
             },
         });
-
+        
         if (!quiz) {
             throw new Error('Quiz data not found')
         }
@@ -36,12 +38,12 @@ export async function submitQuizAnswers(quizId: string, answers: Record<string, 
                 completedAt: new Date(),
             },
         });
-
+        revalidatePath('/dashboard')
         return { score, total: quiz.question.length };
-    } catch (error) {
+    } catch (error: any) {
         return {
             score: 0,
-            total: 10    //hardcoding it for now, later'll change it
+            total: quiz?.question.length || 10
         }
     }
 

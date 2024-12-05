@@ -28,31 +28,40 @@ export async function getQuizById(presentUserId: string) {
 }
 
 
-export async function fetchQuizDataUsingQuizId(id: string) {
-    const apiRes = await prisma.quiz.findUnique({
-        where: {
-            id
-        },
-        include: {
-            question: {
-                include: {
-                    options: {
-                        select: {
-                            id: true,
-                            content: true,
-                            isCorrect: true
-                        }
-                    }
-                }
-            }
+
+export async function fetchQuizDataUsingQuizAttemptId(id: string) {
+    try {
+        const apiRes = await prisma.quizattempt.findUnique({
+            where: {
+                id,
+            },
+            include: {
+                quiz: {
+                    include: {
+                        question: {
+                            include: {
+                                options: {
+                                    select: {
+                                        id: true,
+                                        content: true,
+                                        isCorrect: true,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        });
+
+        if (!apiRes) {
+            console.log(`Quiz attempt with ID ${id} not found.`);
+            return null;
         }
-    })
 
-    if(!apiRes){
-        console.log(apiRes);
-        
-        redirect('/dashboard')
+        return {quiz: apiRes.quiz};
+    } catch (error) {
+        console.error("Error fetching quiz data:", error);
+        throw new Error("Failed to fetch quiz data");
     }
-
-    return apiRes;
 }

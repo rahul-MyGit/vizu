@@ -52,8 +52,10 @@ const QuizTest = ({ quiz }: { quiz: Quiz }) => {
             setShowResultDialog(true);
             toast.success('Quiz Completed');
             redirect('/dashboard');
-        } catch (error) {
+        } catch (error: any) {
+            console.log(error);
             toast.error('Error while submitting');
+            redirect('/dashboard')
         }
     }
 

@@ -27,16 +27,18 @@ export async function getQuizAttempts() {
             id: attempt.id,
             quizName: attempt.quiz.title,
             score: attempt.score || 0,
-            totalQuestions: 10,                         //hardcoding for now 
+            totalQuestions: 10,      //hardcoding for now 
             completedAt: attempt.completedAt ? new Date(attempt.completedAt).toISOString() : '',
         }));
 
+        console.log(formattedAttempts);
+        
         return {
             success: true,
             data: formattedAttempts
         };
     } catch (error: any) {
-        console.log('Error while fetching', error.message);
+        console.log('Error while fetching', error);
         return {
             success: false,
             data: []

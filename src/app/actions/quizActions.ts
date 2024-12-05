@@ -156,9 +156,9 @@ async function generateQuestions(transcript: string): Promise<QuizQuestion[]> {
         question: "What is the main purpose of the video?",
         options: [
           {"content": "Teaching Docker", "isCorrect": false},
-          {"content": "Creating a video subtitle generator", "isCorrect": true},
           {"content": "Explaining Python programming", "isCorrect": false},
-          {"content": "Reviewing AI tools", "isCorrect": false}
+          {"content": "Reviewing AI tools", "isCorrect": false},
+          {"content": "None of the above", "isCorrect": true}
         ],
         explanation: "The video demonstrates how to create an AI-powered video subtitle generator using Whisper AI."
       }

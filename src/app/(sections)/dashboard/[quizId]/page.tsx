@@ -1,26 +1,25 @@
-import { auth } from '@/lib/auth'
-import { fetchQuizDataUsingQuizId } from '@/lib/quiz'
+import QuestionsData from '@/components/QuestionsData'
+import { fetchQuizDataUsingQuizAttemptId } from '@/lib/quiz'
 import { redirect } from 'next/navigation'
-import React from 'react'
+import { toast } from 'sonner'
 
 interface QuizIdProps {
     quizId : string
 }
 
 const page = async ({params} : any) => {
-    const session = await auth()
-    const {quizId} = await params
-    console.log(quizId);
-    
-    if(!session?.user.id){
-        redirect('/')
+    const {quizId} = await params    
+    const data = await fetchQuizDataUsingQuizAttemptId(quizId)
+
+    if(!data){
+      toast.error('Error while accessing the data')
+      redirect('/dashboard')
     }
-    
-    const data = await fetchQuizDataUsingQuizId(quizId)
-    console.log(data);
-    //TODO: update the quiz details here
+
   return (
-    <div>Details about 1 quiz</div>
+    <div>
+      <QuestionsData data={data}/>
+    </div>
   )
 }
 
