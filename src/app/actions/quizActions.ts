@@ -91,7 +91,7 @@ function extractVideoId(url: string) {
     return match ? match[1] : null;
 }
 
-async function generateQuestions(transcript: string): Promise<QuizQuestion[]> {
+export async function generateQuestions(transcript: string): Promise<QuizQuestion[]> {
     const model = genAI.getGenerativeModel({ model: "gemini-pro"});
 
     const prompt = `

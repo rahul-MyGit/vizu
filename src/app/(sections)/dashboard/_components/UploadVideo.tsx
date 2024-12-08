@@ -1,6 +1,7 @@
 'use client'
 
 import { createQuizFromYoutube } from "@/app/actions/quizActions"
+import { generateQuizFromUploadedVideo } from "@/app/actions/uploadVideo"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -53,7 +54,31 @@ const UploadVideo = () => {
     }
 
     const handleFileUpload = async () => {
-        toast.info('File updated successfully')
+        if (!videoFile) {
+            toast.error('Video not uploaded successfully');
+            return;
+        }
+        try {
+            setLoading(true);
+
+            const formData = new FormData();
+            formData.append('video', videoFile);
+
+            const res = await generateQuizFromUploadedVideo(formData)
+
+            if(res.success){
+                router.push('/dashboard/quizstart')
+                toast.success('BE READY, Starting the quizzz')
+            }else{
+                toast.error(res.error || 'Failed to create quiz')
+            }
+        } catch (error) {
+            console.log('Error', error);
+            toast.error('Error while uploading')
+        } finally{
+            setLoading(false);
+        }
+
     }
     return (
         <Tabs defaultValue="upload" className="w-full">
