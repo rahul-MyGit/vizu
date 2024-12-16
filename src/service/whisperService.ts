@@ -11,6 +11,7 @@ export async function transcribeVideoWithWisper(videoUrl: string): Promise<strin
             }
         });
 
+        //TODO: check docs to remove ts-ignore
         // @ts-ignore
         if(response.data && (response.data).transcript) {
             // @ts-ignore

@@ -35,7 +35,7 @@ export async function createQuizFromYoutube(youtubeUrl: string) {
 
         const quiz = await prisma.quiz.create({
             data: {
-                title: 'Quiz From Youtube',
+                title: `Quiz From Youtube: ${videoId}`,
                 videoUrl: youtubeUrl,
                 transcript: transcriptText,
                 userId: session?.user?.id,
