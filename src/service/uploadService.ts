@@ -19,6 +19,20 @@ const videoProcessingQueue = new Queue('videoProcessing', {
 export async function uploadFileToS3(file:File) {
     const key = `video/${Date.now()}_${file.name}`;
     const params = {
-        // Bucket
-    }
+        Bucket: process.env.S3_BUCKET_NAME!,
+        Key: key,
+        Body: Buffer.from(await file.arrayBuffer()),
+        ContentType: file.type
+    };
+
+    const upload = await s3.upload(params).promise();
+    return upload.Location;
+}
+
+export async function queueVideoForProcessing(userId: string, videoUrl: string, originalFilename: string){
+    await videoProcessingQueue.add('processVideo', {
+        userId,
+        videoUrl,
+        originalFilename
+    });
 }
