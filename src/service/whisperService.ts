@@ -12,10 +12,8 @@ export async function transcribeVideoWithWisper(videoUrl: string): Promise<strin
         });
 
         //TODO: check docs to remove ts-ignore
-        // @ts-ignore
-        if(response.data && (response.data).transcript) {
-            // @ts-ignore
-            return (response.data).transcript;
+        if(response.data && (response.data as any).transcript) {
+            return (response.data as any).transcript;
         } else{
             throw new Error('Invalid response from Whisper API');
         }

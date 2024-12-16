@@ -2,6 +2,7 @@
 
 import { createQuizFromYoutube } from "@/app/actions/quizActions"
 import { generateQuizFromUploadedVideo } from "@/app/actions/uploadVideo"
+import { createQuizFromUploadedVideo } from "@/app/actions/uploadVideoAction"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -60,11 +61,27 @@ const UploadVideo = () => {
         }
         try {
             setLoading(true);
+            setProgress(0);
 
             const formData = new FormData();
             formData.append('video', videoFile);
 
-            const res = await generateQuizFromUploadedVideo(formData)
+            const interaval = setInterval(() => {
+                setProgress((prev) => {
+                    if(prev >= 95) {
+                        clearInterval(interaval);
+                        return 100;
+                    }else{
+                        return prev + 1
+                    }
+
+                })
+            })
+
+            const res = await createQuizFromUploadedVideo(formData);
+
+            clearInterval(interaval);
+            setProgress(100);
 
             if(res.success){
                 router.push('/dashboard/quizstart')
@@ -77,6 +94,7 @@ const UploadVideo = () => {
             toast.error('Error while uploading')
         } finally{
             setLoading(false);
+            setProgress(0);
         }
 
     }

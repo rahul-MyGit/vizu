@@ -1,7 +1,7 @@
 import AWS from 'aws-sdk'
 import { Queue } from "bullmq";
 
-import prisma from '@/db';
+// import prisma from '@/db';
 
 const s3 = new AWS.S3({
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -16,7 +16,7 @@ const videoProcessingQueue = new Queue('videoProcessing', {
     }
 });
 
-export async function uploadFileToS3(file:File) {
+export async function uploadVideoToS3(file:File) {
     const key = `video/${Date.now()}_${file.name}`;
     const params = {
         Bucket: process.env.S3_BUCKET_NAME!,

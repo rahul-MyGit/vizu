@@ -39,8 +39,16 @@ const videoProcessingWorker = new Worker('videoProcessing', async (job) => {
             }
         });
 
-        console.log(`Quiz created successfullu for user ${userId}`);
-        
+        await prisma.quizattempt.create({
+            data: {
+                quizId: quiz.id,
+                userId,
+                startedAt: new Date()
+            }
+        });
+
+        console.log(`Quiz created successfully for user ${userId}`);
+
     } catch (error) {
         console.log('Error processing video', error);
     }
